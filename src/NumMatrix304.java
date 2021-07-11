@@ -1,50 +1,52 @@
-public class NumMatrix304 {
-    private int[][] dp;
+class NumMatrix304 {
+    private int[][] cumsum;
 
     public NumMatrix304(int[][] matrix) {
-        if (matrix.length == 0 || matrix[0].length == 0) {
-            return;
-        }
+        // Initialized by zeroes
+        cumsum = new int[matrix.length][matrix[0].length + 1];
 
-        // To easily calculate cumulative sum, get extra one element to each row
-        dp = new int[matrix.length][matrix[0].length + 1];
-
-        for (int r = 0; r < matrix.length; r++) {
-            for (int c = 0; c < matrix[0].length; c++) {
-                dp[r][c + 1] = dp[r][c] + matrix[r][c];
+        for (int i = 0; i < matrix.length; i++) {
+            for (int j = 0; j < matrix[0].length; j++) {
+                cumsum[i][j + 1] = matrix[i][j] + cumsum[i][j];
             }
         }
 
-        // Check
-        for (int[] row : dp) {
-            for (int col : row) {
-                System.out.print(col + ", ");
-            }
-            System.out.println();
-        }
+//        for (int[] row : cumsum) {
+//            for (int ele : row) {
+//                System.out.print(ele + ", ");
+//            }
+//            System.out.println();
+//        }
     }
 
-    /* (row1, col1) is upper left conner. (row2, col2) is lower right conner. They shape rectangle. */
     public int sumRegion(int row1, int col1, int row2, int col2) {
-        int sum = 0;
+        int ans = 0;
 
-        for (int row = row1; row <= row2; row++) {
-            sum += dp[row][col2 + 1] - dp[row][col1];
+        for (int i = row1; i <= row2; i++) {
+            int sum_row = cumsum[i][col2 + 1] - cumsum[i][col1];
+            ans += sum_row;
+
+//            System.out.println(col2 + 1);
+//            System.out.println(cumsum[i][col2 + 1] + ", " + cumsum[i][col1]);
+//            System.out.println(sum_row);
         }
 
-        return sum;
+        return ans;
     }
 
     public static void main(String[] args) {
-        int[][] matrix = {
+        int[][] test = {
                 {3, 0, 1, 4, 2},
                 {5, 6, 3, 2, 1},
                 {1, 2, 0, 1, 5},
                 {4, 1, 0, 1, 7},
                 {1, 0, 3, 0, 5}
         };
-
-        NumMatrix304 obj = new NumMatrix304(matrix);
-
+        NumMatrix304 sol = new NumMatrix304(test);
+//        int[] query = new int[]{2, 1, 4, 3};
+//        int[] query = new int[]{1, 1, 2, 2};
+        int[] query = new int[]{1, 2, 2, 4};
+        int answer = sol.sumRegion(query[0], query[1], query[2], query[3]);
+        System.out.println("Answer: " + answer);
     }
 }
